@@ -9,6 +9,8 @@ import ru.chepenkov.generated.FileChunk;
 import ru.chepenkov.generated.FileUploadResponse;
 import ru.chepenkov.generated.StorageServiceGrpc;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 @Component
@@ -25,35 +27,37 @@ public class ServiceGrpcClient {
         System.out.println("Success connection");
     }
 
-    public void sendFile(byte[] fileBytes) {
-        StreamObserver<FileUploadResponse> responseStreamObserver =
-                new StreamObserver<FileUploadResponse>() {
-                    @Override
-                    public void onNext(FileUploadResponse fileUploadResponse) {
-                        System.out.println(fileUploadResponse.toString());
-                    }
+    public void sendFile(InputStream inputStream) {
+        StreamObserver<FileUploadResponse> responseObserver = new StreamObserver<>() {
+            @Override
+            public void onNext(FileUploadResponse value) {
+                System.out.println("Response: " + value);
+            }
 
-                    @Override
-                    public void onError(Throwable throwable) {
-                        System.out.println(throwable.getMessage());
-                    }
+            @Override
+            public void onError(Throwable t) {
+                System.err.println("Error: " + t.getMessage());
+            }
 
-                    @Override
-                    public void onCompleted() {
-                        System.out.println("done");
-                    }
-                };
-        StreamObserver<FileChunk> requestStreamObserver =
-                asyncStub.uploadFile(responseStreamObserver);
+            @Override
+            public void onCompleted() {
+                System.out.println("Upload complete");
+            }
+        };
 
-        int chunkSize = 1024;
-        for (int i = 0; i < fileBytes.length; i += chunkSize) {
-            int len = Math.min(chunkSize, fileBytes.length - i);
-            byte[] chunk = Arrays.copyOfRange(fileBytes, i, i + len);
-            requestStreamObserver.onNext(FileChunk.newBuilder().setChunkData(ByteString.copyFrom(chunk)).build());
+        StreamObserver<FileChunk> requestObserver = asyncStub.uploadFile(responseObserver);
+
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                ByteString byteString = ByteString.copyFrom(buffer, 0, bytesRead);
+                FileChunk chunk = FileChunk.newBuilder().setChunkData(byteString).build();
+                requestObserver.onNext(chunk);
+            }
+            requestObserver.onCompleted();
+        } catch (IOException e) {
+            requestObserver.onError(e);
         }
-
-        requestStreamObserver.onCompleted();
     }
-
 }
