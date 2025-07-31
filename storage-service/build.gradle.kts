@@ -2,6 +2,7 @@ plugins {
 	java
 	id("com.google.protobuf") version "0.9.5"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
+	//id("org.liquibase.gradle") version "3.0.2"
 }
 
 group = "ru.chepenkov"
@@ -28,7 +29,16 @@ dependencies {
 	implementation("io.grpc:grpc-protobuf:1.73.0")
 	implementation("io.grpc:grpc-stub:1.73.0")
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("io.minio:minio:8.5.17")
+	compileOnly("org.projectlombok:lombok:1.18.38")
+	annotationProcessor("org.projectlombok:lombok:1.18.38")
+	runtimeOnly("org.postgresql:postgresql:42.7.3")
+	//implementation("org.liquibase:liquibase-core")
+	//implementation("org.liquibase:liquibase-core")
+	implementation("org.liquibase:liquibase-core:4.25.1")
+	testCompileOnly("org.projectlombok:lombok:1.18.38")
+	testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
 }
 
 protobuf {

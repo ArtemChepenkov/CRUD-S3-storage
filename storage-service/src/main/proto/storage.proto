@@ -8,16 +8,23 @@ package storage;
 
 service StorageService {
   rpc UploadFile (stream FileChunk) returns (FileUploadResponse);
+  rpc DownloadFile (FileDownloadRequest) returns (stream FileChunk);
 }
 
 message FileChunk {
-  string filename = 1;
-  bytes chunkData = 2;
-  int32 chunkIndex = 3;
-  bool isLast = 4;
+  string userId = 1;
+  string filename = 2;
+  bytes chunkData = 3;
+  int32 chunkIndex = 4;
+  bool isLast = 5;
 }
 
 message FileUploadResponse {
   string fileUrl = 1;
   bool isSuccess = 2;
+}
+
+message FileDownloadRequest {
+  string userId = 1;
+  string filename = 2;
 }
