@@ -2,7 +2,7 @@ plugins {
 	java
 	id("com.google.protobuf") version "0.9.5"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
-	id("org.liquibase.gradle") version "2.2.0"
+	//id("org.liquibase.gradle") version "2.2.0"
 	//id("org.liquibase.gradle") version "3.0.2"
 }
 
@@ -34,6 +34,8 @@ dependencies {
 	compileOnly("org.projectlombok:lombok:1.18.38")
 	annotationProcessor("org.projectlombok:lombok:1.18.38")
 	runtimeOnly("org.postgresql:postgresql:42.7.3")
+	//liquibaseRuntime("org.liquibase:liquibase-core:4.25.1")
+	//liquibaseRuntime("org.liquibase:liquibase-core:4.25.1")
 	implementation("org.hibernate.orm:hibernate-core:6.5.2.Final")
 	//implementation("org.liquibase:liquibase-core")
 	//implementation("org.liquibase:liquibase-core")
@@ -79,19 +81,6 @@ sourceSets {
 		proto {
 			srcDir ("storage-service/src/main/proto")
 		}
-	}
-}
-
-liquibase {
-	activities.register("main") {
-		arguments = mapOf(
-			"logLevel" to "info",
-			"changeLogFile" to "src/main/resources/db/changelog/changelog.xml",
-			"url" to "jdbc:postgresql://localhost:5432/storage",
-			"username" to "postgres",
-			"password" to "postgres",
-			"driver" to "org.postgresql.Driver"
-		)
 	}
 }
 

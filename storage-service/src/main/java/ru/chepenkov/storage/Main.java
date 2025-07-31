@@ -11,9 +11,9 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		DatabaseMigration.runMigrations(
-				"jdbc:postgresql://your-db-host:5432/your-db-name",
-				"db_name",
-				"db_pass"
+				"jdbc:postgresql://postgres:5432/storage",
+				"postgres",
+				"password"
 				);
 		Server server = ServerBuilder
 				.forPort(9090)

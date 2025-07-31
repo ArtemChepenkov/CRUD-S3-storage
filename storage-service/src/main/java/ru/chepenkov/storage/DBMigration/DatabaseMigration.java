@@ -20,7 +20,7 @@ public class DatabaseMigration {
         try {
             Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
             Database database = DatabaseFactory.getInstance()
-                    .findCorrectDatabaseImplementation(new JdbcConnection());
+                    .findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
             Liquibase liquibase = new Liquibase(
                     "db/changelog/db.changelog-master.yaml",
